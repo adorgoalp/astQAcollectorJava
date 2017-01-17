@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.jsoup.Jsoup;
 import org.jsoup.Connection.Response;
@@ -25,16 +27,16 @@ public class CollectorAST implements Runnable {
 
 	@Override
 	public void run() {
-//		DatabaseHelper databaseHelper = new DatabaseHelper("qa.db");
-//		databaseHelper.createNewDatabase();
-//		databaseHelper.createQATable();
-		for (int i = 65; i > 63; i--) {
+		// DatabaseHelper databaseHelper = new DatabaseHelper("qa.db");
+		// databaseHelper.createNewDatabase();
+		// databaseHelper.createQATable();
+		for (int i = 42; i > 41; i--) {
 			page = i;
 			url = baseUrl + i;
 			ArrayList<QuestionAnswerModel> result = getInfo();
-//			databaseHelper.insertAll(result);
+			// databaseHelper.insertAll(result);
 		}
-//		databaseHelper.prepareDatabaseForLocalImport();
+		// databaseHelper.prepareDatabaseForLocalImport();
 	}
 
 	private ArrayList<QuestionAnswerModel> getInfo() {
@@ -75,8 +77,6 @@ public class CollectorAST implements Runnable {
 
 	}
 
-	int prevQid = 1;
-
 	private ArrayList<QuestionAnswerModel> parseQuestionAnswers(Elements data, ArrayList<String> category) {
 		int size = data.size();
 		String tempQ = "not parsed", tempA;
@@ -86,18 +86,29 @@ public class CollectorAST implements Runnable {
 		int j = 0;
 		for (int i = 0; i < size; i += 2) {
 			try {
+
+				String qNo = "-";
 				tempQ = data.get(i).text();
 				tempA = data.get(i + 1).text();
 
+				Pattern pattern = Pattern.compile("\\(+\\d*+\\)");
+				Matcher matcher = pattern.matcher(tempQ.substring(0, 50));
+				if (matcher.find()) {
+					qNo = matcher.group().trim().replaceAll("\\(", "").replaceAll("\\)", "");
+				}
+
 				tempQ = tempQ.replaceAll("ifta ", "\n");
 				tempQ = tempQ.replaceAll("ifta", "\n");
-				tempQ = tempQ.replaceAll("\\(+\\d*+\\)", "");
 
 				tempA = tempA.replaceAll("ifta ", "\n");
 				tempA = tempA.replaceAll("ifta", "\n");
-				tempA = tempA.replaceAll("\\(+\\d*+\\)", "");
 
-				result.add(new QuestionAnswerModel(prevQid++, tempQ.trim(), tempA.trim(), category.get(j++).trim()));
+				if (!qNo.equals("-")) {
+					tempQ = tempQ.replace("\\(+\\d*+\\)", "");
+					tempA = tempA.replace("\\(+\\d*+\\)", "");
+				}
+
+				result.add(new QuestionAnswerModel(qNo, tempQ.trim(), tempA.trim(), category.get(j++).trim()));
 				tempA = tempQ = qId = "not aprsed";
 			} catch (Exception e) {
 				e.printStackTrace();

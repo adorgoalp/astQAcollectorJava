@@ -63,7 +63,7 @@ public class DatabaseHelper {
 		// SQL statement for creating a new table
 		String sql = "CREATE TABLE IF NOT EXISTS "
 				+QA_TABLE+" (" 
-				+ "qaId number PRIMARY KEY," 
+				+ "siteQuestionNo text," 
 				+ "question text,"
 				+ "answer text," 
 				+ "category text);";
@@ -86,16 +86,16 @@ public class DatabaseHelper {
 		for(int i = 0 ; i < result.size() ; i++)
 		{
 			QuestionAnswerModel qa = result.get(i);
-			insert(qa.questionId,qa.question,qa.answer,qa.category);
+			insert(qa.siteQuestionNo,qa.question,qa.answer,qa.category);
 		}
 	}
 
-	private void insert(int questionId, String question, String answer, String category) {
+	private void insert(String siteQuestionNo, String question, String answer, String category) {
 		String sql = "INSERT INTO "+QA_TABLE+" (qaId,question,answer,category) VALUES(?,?,?,?)";
 		 
         try (Connection conn = this.connect();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, questionId);
+            pstmt.setString(1, siteQuestionNo);
             pstmt.setString(2, question);
             pstmt.setString(3, answer);
             pstmt.setString(4, category);

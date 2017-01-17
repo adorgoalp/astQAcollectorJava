@@ -1,12 +1,12 @@
 
 public class QuestionAnswerModel {
-	public int questionId;
+	public String siteQuestionNo;
 	public String question, answer,category;
 
 	
 
-	public QuestionAnswerModel(int questionId, String question, String answer, String category) {
-		this.questionId = questionId;
+	public QuestionAnswerModel(String siteQuestionNo, String question, String answer, String category) {
+		this.siteQuestionNo = siteQuestionNo;
 		this.question = question;
 		this.answer = answer;
 		this.category = category;
@@ -16,9 +16,10 @@ public class QuestionAnswerModel {
 
 	@Override
 	public String toString() {
-		return "ID - " + questionId + "\n" 
+		return "SiteQuestionNo - " + siteQuestionNo + "\n" 
+				+"Category - " + category +"\n"
 				+ "Question - " + question + "\n" 
-				+ "Answer - " + answer + "\n"
-				+"Category - " + category +"\n\n";
+				+ "Answer - " + answer + "\n\n"
+				;
 	}
 }
